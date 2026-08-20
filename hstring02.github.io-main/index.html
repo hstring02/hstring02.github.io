@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harry Stringer — Aerodynamics Engineering</title>
+<meta name="description" content="Aerodynamics engineering portfolio — CAD design, CFD analysis, and CFD tooling.">
+
+<!--
+  ============================================================
+  EDIT ME GUIDE
+  ============================================================
+  Content below is filled in from Harry's CV, ordered by
+  F1 relevance: Formula Student -> MRF dissertation ->
+  meshing tool -> UAS Challenge.
+
+  1. REMAINING STEP: every project still shows a placeholder
+     photo box. Drop real images in an /assets/img/ folder in
+     your repo, then for each project uncomment the <img> line
+     right above its .row__placeholder and delete the
+     placeholder div. Recommended image ratio: 4:3.
+  2. To add a new project row, copy one whole <article class="row">
+     block and paste it before the closing </div> of <section id="projects">.
+  3. Stat values were taken directly from the CV. If you add new
+     ones, only use figures you can actually back up in interview.
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Color — pulled from CFD pressure-contour convention: blue = low pressure / high velocity, red = high pressure / stagnation */
+    --carbon: #0a0c0f;
+    --panel: #14181d;
+    --paper: #eceeee;
+    --graphite: #9aa1aa;
+    --cp-low: #3a86e0;
+    --cp-high: #e2492f;
+    --hairline: rgba(236, 238, 238, 0.12);
+
+    /* Type */
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --content-width: 1100px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--carbon);
+    color: var(--paper);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--cp-low);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10, 12, 15, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .nav__inner {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 1.1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav__mark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+
+  .nav__links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav__links a {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--graphite);
+    transition: color 0.2s ease;
+  }
+
+  .nav__links a:hover { color: var(--paper); }
+
+  /* ---------- Legend bar — the signature device ---------- */
+  /* A Cp colorbar: blue (low pressure) to red (high pressure), reused
+     at hero scale and as a small key beside every project's stats. */
+  .legend {
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--cp-low), var(--paper) 50%, var(--cp-high));
+  }
+
+  .legend--hero { width: 100%; max-width: 340px; margin-top: 2rem; }
+  .legend--row { width: 44px; flex-shrink: 0; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 7rem 0 5rem;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .hero__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--cp-low);
+    text-transform: uppercase;
+    margin: 0 0 1rem;
+  }
+
+  .hero__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__role {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    color: var(--graphite);
+    max-width: 46ch;
+    margin: 1.2rem 0 0;
+  }
+
+  /* ---------- About strip ---------- */
+  /* Structured identically to #projects below: a .section__label sits
+     directly above its content, both inside .wrap. Sharing one pattern
+     is what keeps the two section headers aligned — no offset math. */
+  .about {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .about__text { max-width: 65ch; color: var(--paper); }
+  .about__text p { margin: 0; }
+
+  /* ---------- Projects section ---------- */
+  #projects { padding: 5rem 0 6rem; }
+
+  .section__label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--graphite);
+    text-transform: uppercase;
+    margin: 0 0 1.5rem;
+  }
+
+  #projects .section__label { margin-bottom: 3rem; }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(260px, 420px) 1fr;
+    gap: 3rem;
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .row:first-of-type { padding-top: 0; }
+  .row:last-of-type { border-bottom: none; }
+
+  /* Progressive enhancement: rows are fully visible by default.
+     JS adds .reveal-ready on load, then .is-visible on scroll-into-view. */
+  .row.reveal-ready {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .row.reveal-ready.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .row__media img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    border-radius: 2px;
+    filter: brightness(0.94);
+    transition: filter 0.3s ease;
+  }
+
+  .row__media img:hover { filter: brightness(1.04); }
+
+  /* Placeholder box styled like technical drafting crop-marks —
+     swap for a real <img> once you have project photos/renders. */
+  .row__placeholder {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 2px;
+    background-color: var(--panel);
+    background-image:
+      linear-gradient(var(--graphite) 0 0), linear-gradient(var(--graphite) 0 0),
+      linear-gradient(var(--graphite) 0 0), linear-gradient(var(--graphite) 0 0),
+      linear-gradient(var(--graphite) 0 0), linear-gradient(var(--graphite) 0 0),
+      linear-gradient(var(--graphite) 0 0), linear-gradient(var(--graphite) 0 0);
+    background-repeat: no-repeat;
+    background-size: 16px 1px, 1px 16px, 16px 1px, 1px 16px, 16px 1px, 1px 16px, 16px 1px, 1px 16px;
+    background-position:
+      16px 16px, 16px 16px,
+      calc(100% - 16px) 16px, calc(100% - 16px) 16px,
+      16px calc(100% - 16px), 16px calc(100% - 16px),
+      calc(100% - 16px) calc(100% - 16px), calc(100% - 16px) calc(100% - 16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .row__placeholder span {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--graphite);
+    max-width: 22ch;
+  }
+
+  .row__index {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--cp-low);
+    margin: 0 0 0.6rem;
+  }
+
+  .row__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.005em;
+  }
+
+  .row__meta {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--graphite);
+    margin: 0 0 1.1rem;
+  }
+
+  .row__text {
+    max-width: 60ch;
+    color: var(--paper);
+    margin: 0 0 1.6rem;
+  }
+
+  .row__stats {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .stat__value {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+
+  .stat__value--low { color: var(--cp-low); }
+  .stat__value--high { color: var(--cp-high); }
+
+  .stat__label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--graphite);
+    text-transform: uppercase;
+  }
+
+  /* Empty-state row: invites the next project rather than apologizing for its absence */
+  .row--empty .row__placeholder { border: 1px dashed var(--hairline); background-image: none; }
+  .row--empty .row__title { color: var(--graphite); }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    border-top: 1px solid var(--hairline);
+    padding: 3rem 0;
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer__text {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--graphite);
+  }
+
+  .footer__links {
+    display: flex;
+    gap: 1.6rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer__links a {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-decoration: none;
+    color: var(--paper);
+    border-bottom: 1px solid var(--hairline);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .footer__links a:hover { border-color: var(--cp-low); color: var(--cp-low); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 760px) {
+    .row { grid-template-columns: 1fr; gap: 1.5rem; }
+    .nav__links { gap: 1.2rem; }
+    .hero { padding: 5rem 0 3.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .row.reveal-ready {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .row__media img,
+    .footer__links a,
+    .nav__links a {
+      transition: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="nav__mark" href="#top">HS / ENGINEERING</a>
+    <ul class="nav__links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <p class="hero__eyebrow">Aerodynamics Engineering</p>
+    <h1 class="hero__name">Harry Stringer</h1>
+    <p class="hero__role">MEng Aerospace graduate with CFD-focused industrial experience at Airbus and Formula Student, including direct CFD solver development — seeking a Formula 1 Graduate Aerodynamicist role.</p>
+    <div class="legend legend--hero" aria-hidden="true"></div>
+  </div>
+</header>
+
+<section class="about" id="about">
+  <div class="wrap">
+    <p class="section__label">About</p>
+    <div class="about__text">
+      <p>MEng Aerospace Engineering graduate from the University of Nottingham (80%), specialising in CFD (Meshing, Automation, Verification, Open-Source dev). Experience spans Airbus Aerodynamics Internship, Formula Student Aero Design and IMechE UAS Challenge Leadership. Proficient in Fluent, XCALibre, and Tau, with Python/MATLAB/Julia automation skills. Aiming for a Formula 1 Graduate Aerodynamicist role.</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <p class="section__label">Projects</p>
+
+    <!-- ============ PROJECT ROW 1 — 2D meshing tool ============ -->
+    <article class="row reveal">
+      <div class="row__media">
+        <img src="assets/img/aerofoil-meshing-tool.png" alt="Multi-element aerofoil mesh, generated by the automated meshing tool"> 
+        <!--<div class="row__placeholder">-->
+        <!--  <span>Add a mesh output image — multi-element aerofoil, batch sweep</span>-->
+        <!--</div>-->
+      </div>
+      <div class="row__content">
+        <p class="row__index">2026–Present</p>
+        <h3 class="row__title">2D Multi-Element Aerofoil Meshing Tool</h3>
+        <p class="row__meta">Python · Meshing · Automation · XCALibre</p>
+        <p class="row__text">Building an automated meshing tool for 2D multi-element aerofoil profiles to enable rapid design-space exploration of element spacing and incidence angle. Meshes are output to the text-based XCALibre solver, enabling simplified batch simulations driven by custom user scripts — turning a manual, one-off meshing task into a repeatable sweep.</p>
+        <div class="row__stats">
+          <div class="stat">
+            <span class="stat__value stat__value--low">2D</span>
+            <span class="stat__label">Multi-element, batch-swept</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value stat__value--high">In dev</span>
+            <span class="stat__label">Ongoing project</span>
+          </div>
+          <div class="legend legend--row" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ PROJECT ROW 2 — Formula Student aero ============ -->
+    <article class="row reveal">
+      <div class="row__media">
+        <!-- Uncomment once you have a real image, then delete the placeholder div below -->
+        <!-- <img src="assets/img/formula-student-aero.jpg" alt="Front-wing endplate CAD model, Formula Student car"> -->
+        <div class="row__placeholder">
+          <span>Add a CAD render or car photo — front wing / endplate / rear wing</span>
+        </div>
+      </div>
+      <div class="row__content">
+        <p class="row__index">2025–Present</p>
+        <h3 class="row__title">Aero Package Development - Formula Student UK</h3>
+        <p class="row__meta">3DExperience · Ansys Fluent · Ansys Discovery</p>
+        <p class="row__text">Redesigned front-wing endplates to direct tip vortices away from the undertray intake and optimised side-wing endplate geometry to shield surfaces from front-tyre wake, preserving high-energy flow. Used topology optimisation to minimise rear-wing swan-neck mass while ensuring a controlled failure mode, and built parameter-driven surface models for composite wing structures to enable automated surface updates through geometry iterations.</p>
+        <div class="row__stats">
+          <div class="stat">
+            <span class="stat__value stat__value--low">+3%</span>
+            <span class="stat__label">Downforce, front wing redesign</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value stat__value--high">5th</span>
+            <span class="stat__label">Overall, Cost Final qualifier</span>
+          </div>
+          <div class="legend legend--row" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ PROJECT ROW 3 — MRF solver dissertation ============ -->
+    <article class="row reveal">
+      <div class="row__media">
+        <!-- <img src="assets/img/mrf-xcalibre.jpg" alt="Velocity contour comparison, XCALibre MRF implementation vs Ansys Fluent"> -->
+        <div class="row__placeholder">
+          <span>Add a solver validation plot — XCALibre vs. Fluent velocity contours</span>
+        </div>
+      </div>
+      <div class="row__content">
+        <p class="row__index">2025–26</p>
+        <h3 class="row__title">MRF Method CFD Implementation — MEng Dissertation</h3>
+        <p class="row__meta">Julia · XCALibre (open-source CFD solver) · CFD Verification</p>
+        <p class="row__text">Integrated a Multiple Reference Frame (MRF) numerical method into the open-source XCALibre CFD solver using Julia, extending the solver's capabilities to steady-state rotor aerodynamics. Formulated a novel approach for defining MRF regions that reduces manual pre-processing and enables fully automated sensitivity studies, then validated the implementation against Ansys Fluent. Managed the full development lifecycle via GitHub — traceable commits, debugging, and a merged workflow into the main repository.</p>
+        <div class="row__stats">
+          <div class="stat">
+            <span class="stat__value stat__value--low">&lt;2%</span>
+            <span class="stat__label">Variance vs. Fluent, velocity profiles</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value stat__value--high">79%</span>
+            <span class="stat__label">Dissertation mark</span>
+          </div>
+          <div class="legend legend--row" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+
+
+    <!-- ============ PROJECT ROW 4 — UAS Challenge ============ -->
+    <article class="row reveal">
+      <div class="row__media">
+        <!-- <img src="assets/img/uas-challenge.jpg" alt="UAS Challenge aircraft, straight-wing configuration"> -->
+        <div class="row__placeholder">
+          <span>Add a CAD render or build photo — full aircraft or wing assembly</span>
+        </div>
+      </div>
+      <div class="row__content">
+        <p class="row__index">2022–24</p>
+        <h3 class="row__title">CAD Management/Modelling - IMechE UAS Challenge</h3>
+        <p class="row__meta">Surface Modelling · Large Assembly · 3DExperience</p>
+        <p class="row__text">Founded and grew a 36-member team from scratch, securing £7,300 in funding and multiple sponsors. Used 3DExperience to design aerodynamic surfaces and manage a 300+ part product tree, delivering a working UAS within 2 years against a typical 5-year development cycle for new teams. Ran a trade-off analysis between wing planforms and opted for a straight wing to prioritise manufacturability despite a 3% drag penalty, then manufactured a sandwich-panel carbon-fibre landing gear using wet-layup and vacuum bag.</p>
+        <div class="row__stats">
+          <div class="stat">
+            <span class="stat__value stat__value--high">+3%</span>
+            <span class="stat__label">Drag, accepted for manufacturability</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value stat__value--low">120+</span>
+            <span class="stat__label">Requirements tracked to verification</span>
+          </div>
+          <div class="legend legend--row" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer class="footer" id="contact">
+  <div class="wrap footer__inner">
+    <p class="footer__text">© <span id="year"></span> Harry Stringer</p>
+    <ul class="footer__links">
+      <li><a href="mailto:harrystringerwork@gmail.com">Email</a></li>
+      <li><a href="https://github.com/hstring02">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/harry-stringer-55a594241">LinkedIn</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Progressive enhancement: mark rows as animatable, then reveal on scroll.
+  var rows = document.querySelectorAll('.reveal');
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    rows.forEach(function (row) { row.classList.add('reveal-ready'); });
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    rows.forEach(function (row) { observer.observe(row); });
+  }
+</script>
+
+</body>
+</html>
